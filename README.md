@@ -1,6 +1,6 @@
 <h1>The Attitudes of Twitter Users towards the Nomination of Neera Tanden as Member of President-Elect Joe Biden’s Cabinet: A Thematic and Sentiment Analysis</h1>
 <i>Text Analysis Project by Andrew Altuna, Bernard Diamante, Paolo Fuentes, and Jan Laguer</i><br>
-<i>*Refer to the <a href="https://github.com/bernard-diamante/neera-tanden/blob/main/slides_deck.pdf">slides deck<a> for complete details and visualizations
+<i>*Refer to the <a href="https://github.com/bernard-diamante/neera-tanden/blob/main/slides_deck.pdf">slides deck<a> for complete details and visualizations</i>
 <hr>
 <h2>Background of the Study</h2>
 <ul>
