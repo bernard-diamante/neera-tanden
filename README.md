@@ -1,5 +1,6 @@
 <h1>The Attitudes of Twitter Users towards the Nomination of Neera Tanden as Member of President-Elect Joe Biden’s Cabinet: A Thematic and Sentiment Analysis</h1>
-<i>Text Analysis Project by Andrew Altuna, Bernard Diamante, Paolo Fuentes, and Jan Laguer</i>
+<i>Text Analysis Project by Andrew Altuna, Bernard Diamante, Paolo Fuentes, and Jan Laguer</i><br>
+<i>*Refer to the <a href="https://github.com/bernard-diamante/neera-tanden/blob/main/slides_deck.pdf">slides deck<a> for complete details and visualizations
 <hr>
 <h2>Background of the Study</h2>
 <ul>
@@ -87,7 +88,3 @@ Data mining using the Twitter API retrieves a lot of personal information such a
 <p><b>Privacy</b><br>
 Twitter users have an option to keep their Tweets private--available to only those who follow them. The researchers have only mined 'unprotected tweets' in order to keep the privacy of these users.
 </p>
-<hr>
-<h2>Visualizations</h2>
-    <h3>Sentiment Analysis</h3>
-    
