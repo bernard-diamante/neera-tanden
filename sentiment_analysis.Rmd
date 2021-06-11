@@ -1,0 +1,160 @@
+---
+title: "sentiment_analysis"
+author: "Andrew Altuna & Bernard Diamante"
+date: "12/31/2020"
+output: html_document
+---
+
+## Load libraries
+```{r}
+library(tidytext)
+library(tidyverse)
+library(dplyr)
+library(wordcloud2)
+```
+
+## Load in master_dataset and filter dates
+```{r}
+md <- cleaned_master_dataset
+md$created_at <- as.Date(md$created_at)
+
+md <- md %>%
+  filter(!(created_at <= "2020-11-28")) %>%
+  filter(!(created_at == "2020-12-05"))
+```
+
+## Tokenize words and extract word and date columns
+```{r}
+word_date <- md %>%
+   unnest_tokens(input = stripped_punctuations, output = word) %>%
+   select(created_at,word)
+```
+
+## Filtering out custom stop words
+```{r}
+custom_stop_words <- tibble(word = c("trump", "poverty", "hedge", "conservative", "inequality", "rhetoric", "nominate", "management", "cabinet", "government", "pick", "director", "council", "president", "elect", "budget", "confirmed", "center", "team", "pay", "labor", "senate", "trade", "white", "deputy", "horse", "committee", "cap", "policy", "rod", "spokesman", "extra", "john", "nomination" ), lexicon = c("custom"))
+
+word_date <- word_date %>%
+   anti_join(custom_stop_words, by="word")
+```
+
+## Sentiment scores per word per day
+
+### Bing Lexicon
+```{r}
+bing_worddate <- word_date %>%
+   inner_join(get_sentiments("bing"), by = "word") %>%
+   count(word, date = created_at, sentiment) %>%
+   spread(sentiment, n,  fill = 0) %>%
+   mutate(sentiment = positive - negative, n = positive + negative)
+  
+bing_totalsenti <- aggregate(bing_worddate[ , 3:5], FUN="sum", list(date = bing_worddate$date))
+```
+
+### AFINN Lexicon
+```{r}
+afinn_worddate <- word_date %>%
+   inner_join(get_sentiments("afinn"), by = "word") %>%
+   count(word, date = created_at, value) %>%
+   mutate(sentiment = value * n)
+   
+afinn_totalsenti <- aggregate(afinn_worddate[ , 5], FUN="sum", list(date = afinn_worddate$date))%>%
+   rename(sentiment = x)
+```
+
+## Visualizations
+
+### Bing
+### This code generates the figure for "Sentiment of Twitter Users Towards Tanden Over Time (Bing)"
+```{r}
+ggplot(bing_totalsenti, aes(x = date, y = sentiment, fill = "Sentiment")) +
+  geom_col(show.legend = FALSE) +
+  #labs(caption="Figure x.x: Sentiment of Twitter Users Towards Tanden Over Time (Bing)") + 
+  theme(plot.caption = element_text(hjust=0.5, size=rel(0.9)))
+ggsave("over_time_bing.png")
+```
+### AFINN
+### This code generates the figure for "Sentiment of Twitter Users Towards Tanden Over Time (AFINN)"
+```{r}
+ggplot(afinn_totalsenti, aes(x = date, y = sentiment, fill = "Sentiment")) +
+  geom_col(show.legend = FALSE) +
+  #labs(caption="Figure x.x: Sentiment of Twitter Users Towards Tanden Over Time (AFINN)") +
+  theme(plot.caption = element_text(hjust=0.5, size=rel(0.9)))
+ggsave("over_time_afinn.png")
+```
+## Contribution to sentiment
+
+### Bing
+### This code generates the figure for Top 10 Words with Largest Contribution per Sentiment (Bing)
+```{r}
+bing_word_counts <- word_date %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  ungroup()
+
+bing_word_counts %>%
+   group_by(sentiment) %>%
+   slice_max(order_by = n, n = 10) %>%
+   ungroup() %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(n, word, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~sentiment, scales = "free_y") +
+  labs(x = "contribution to sentiment",
+       y = NULL) +
+  #labs(caption="Figure x.x: Top 10 Words with Largest Contribution per Sentiment (Bing)") +
+  theme(plot.caption = element_text(hjust=0.5, size=rel(0.9)))
+ggsave("top10_bing.png")
+```
+### AFINN
+### This code generates the figure for Top 10 Words with Largest Contribution per Sentiment (AFINN)
+```{r}
+afinn_wordtotals <- aggregate(afinn_worddate[ , 5], FUN="sum", list(word = afinn_worddate$word)) %>%
+   rename(sentiment = x)
+
+sent <- ifelse(afinn_wordtotals$sentiment > 0, "positive", "negative")
+
+afinn_wordtotals <- cbind(sent,afinn_wordtotals)
+afinn_wordtotals$sentiment <- abs(afinn_wordtotals$sentiment)
+
+afinn_wordtotals %>%
+   group_by(sent) %>%
+   slice_max(order_by = sentiment, n = 10) %>%
+   ungroup() %>%
+  mutate(word = reorder(word, sentiment)) %>%
+   
+  ggplot(aes(sentiment, word, fill = sent)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~sent, scales = "free_y") +
+  labs(x = "contribution to sentiment",
+       y = NULL) +
+  #labs(caption="Figure x.x: Top 10 Words with Largest Contribution per Sentiment (AFINN)") + 
+  theme(plot.caption = element_text(hjust=0.5, size=rel(0.9)))
+ggsave("top10_afinn.png")
+```
+### NRC (Moods)
+### This code generates the figure for Cumulative Mood Counts (NRC)
+```{r}
+nrc_worddate <- word_date %>%
+   inner_join(get_sentiments("nrc"), by = "word") %>%
+   count(word, date = created_at, sentiment) %>%
+   spread(sentiment, n,  fill = 0) %>%
+   mutate(sentiment = positive - negative, n = positive + negative)
+
+nrc_wordtotals <- aggregate(nrc_worddate[ , 3:12], FUN="sum", list(word = nrc_worddate$word)) %>%
+   select(c(2:11)) %>%
+   colSums() %>%
+   data.frame()
+   
+rnames <- rownames(nrc_wordtotals)
+
+nrc_wordtotals <- mutate(nrc_wordtotals, Mood = rnames)
+colnames(nrc_wordtotals) <- c("count","mood")
+nrc_wordtotals <- nrc_wordtotals[order(nrc_wordtotals$count),]
+
+ggplot(nrc_wordtotals, aes(x = mood, y = count, fill = mood)) +
+  geom_col(show.legend = FALSE) +
+  #labs(caption="Figure x.x: Mood of Twitter Users Towards Tanden") + 
+  theme(plot.caption = element_text(hjust=0.5, size=rel(0.9)))
+ggsave("mood_count.png")
+```

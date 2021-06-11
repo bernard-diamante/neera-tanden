@@ -1,0 +1,187 @@
+---
+title: "Tweet Mining"
+author: "Paolo Fuentes"
+date: "11/8/2020"
+output: html_document
+---
+
+```{r, message=FALSE}
+# Install developer version of rtweet from github
+remotes::install_github("ropensci/rtweet")
+
+# Load libraries
+library(rtweet)
+library(ggplot2)
+library(httpuv)
+library(dplyr)
+```
+
+## Mining Keyword 1
+```{r}
+mined_neera1 <- rtweet::search_tweets("#Neera", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera1 <- data.frame(lapply(mined_neera1, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera1, "neera1.csv", row.names = FALSE)
+```
+
+## Mining Keyword 2
+```{r}
+mined_neera2 <- rtweet::search_tweets("#Tanden", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera2 <- data.frame(lapply(mined_neera2, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera2, "neera2.csv", row.names = FALSE)
+```
+
+## Mining Keyword 3
+```{r}
+mined_neera3 <- rtweet::search_tweets("#NeeraTanden", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera3 <- data.frame(lapply(mined_neera3, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera3, "neera3.csv", row.names = FALSE)
+```
+
+## Mining Keyword 4
+```{r}
+mined_neera4 <- rtweet::search_tweets("#NeeraTandenIsEvil", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera4 <- data.frame(lapply(mined_neera4, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera4, "neera4.csv", row.names = FALSE)
+```
+
+## Mining Keyword 5
+```{r}
+mined_neera5 <- rtweet::search_tweets("Biden Neera Tanden", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera5 <- data.frame(lapply(mined_neera5, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera5, "neera5.csv", row.names = FALSE)
+```
+
+## Mining Keyword 6
+```{r}
+mined_neera6 <- rtweet::search_tweets("Neera Tanden Biden cabinet", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera6 <- data.frame(lapply(mined_neera6, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera6, "neera6.csv", row.names = FALSE)
+```
+
+## Mining Keyword 7
+```{r}
+mined_neera7 <- rtweet::search_tweets("Neera Tanden Biden appointee", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera7 <- data.frame(lapply(mined_neera7, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera7, "neera7.csv", row.names = FALSE)
+```
+
+## Mining Keyword 8
+```{r}
+mined_neera8 <- rtweet::search_tweets("Neera Tanden", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera8 <- data.frame(lapply(mined_neera8, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera8, "neera8.csv", row.names = FALSE)
+```
+
+## Mining Keyword 9
+```{r}
+mined_neera9 <- rtweet::search_tweets("Neera Tanden transition", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera9 <- data.frame(lapply(mined_neera9, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera9, "neera9.csv", row.names = FALSE)
+```
+
+## Mining Keyword 10
+```{r}
+mined_neera10 <- rtweet::search_tweets("Neera Tanden cabinet", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera10 <- data.frame(lapply(mined_neera10, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera10, "neera10.csv", row.names = FALSE)
+```
+
+## Mining Keyword 11
+```{r}
+mined_neera11 <- rtweet::search_tweets("Neera Tanden cabinet", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera11 <- data.frame(lapply(mined_neera11, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera11, "neera11.csv", row.names = FALSE)
+```
+
+## Mining Keyword 12
+```{r}
+mined_neera12 <- rtweet::search_tweets("Neera Tanden cabinet", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera12 <- data.frame(lapply(mined_neera12, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera12, "neera12.csv", row.names = FALSE)
+```
+
+## Mining Keyword 13
+```{r}
+mined_neera13 <- rtweet::search_tweets("Neera Tanden cabinet", n=50, include_rts = TRUE, retryonratelimit = TRUE)
+```
+
+##Saving dataframe into a CSV file
+```{r}
+mined_neera13 <- data.frame(lapply(mined_neera13, as.character), stringsAsFactors = FALSE)
+
+write.csv(mined_neera13, "neera13.csv", row.names = FALSE)
+```
+
+## Merging all dataframes of keywords into one dataframe
+```{r}
+all_uncleaned_mined_tweets <- rbind(mined_neera1, mined_neera2, mined_neera3, mined_neera4, mined_neera5, mined_neera6, mined_neera7, mined_neera8, mined_neera9, mined_neera10, mined_neera11, mined_neera12)
+
+all_uncleaned_mined_tweets <- all_uncleaned_mined_tweets[!duplicated(all_uncleaned_mined_tweets$status_id),]
+```
+
+## Converting merged dataframe into a CSV file
+```{r}
+all_uncleaned_mined_tweets <- data.frame(lapply(all_uncleaned_mined_tweets, as.character), stringsAsFactors = FALSE)
+
+write.csv(all_uncleaned_mined_tweets, "all_uncleaned_mined_tweets.csv", row.names=FALSE)
+``

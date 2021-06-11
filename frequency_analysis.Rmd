@@ -1,0 +1,101 @@
+---
+title: "cleaning the dataset and frequency analysis"
+author: "Paolo Fuentes"
+date: "12/18/2020"
+output: html_document
+---
+
+## Loading libraries
+```{r}
+library(tidytext)
+library(tidyverse)
+library(dplyr)
+library(wordcloud2)
+library(ggplot2)
+```
+
+## Reading the CSV file of master_dataset (cleaned dataset)
+```{r}
+cleaned_master_dataset <- read_csv("cleaned_master_dataset.csv", col_types="ccccccc")
+```
+
+## Tokenizing the Tweets
+```{r}
+word_count.df <- cleaned_master_dataset %>%
+  unnest_tokens(input = stripped_punctuations, output = word) %>%
+  count(word, name="freq", sort=TRUE)
+```
+
+## Top 20 Words based on Frequency Count Visualization
+```{r}
+most_frequent_words_plot <-
+  word_count.df %>%
+  top_n(20, freq) %>%
+  mutate(word = reorder(word, freq)) %>%
+  # visualizing the 10 most frequent words
+  ggplot(aes(word, freq)) +
+  geom_col(col = "darkblue", fill = "darkorange") +
+  labs( title = "Most Frequently Used Words",
+        x     = "Words",
+        y     = "Frequency") +
+  theme(plot.title   = element_text(hjust = 0.5, face = "bold", size = 24),
+        axis.text.x  = element_text(hjust = 0.5, face = "bold", size = 18),
+        axis.text.y  = element_text(hjust = 0.5, face = "bold", size = 18),
+        axis.title.x = element_text(hjust = 0.5, face = "bold", size = 20)) +
+  coord_flip() 
+most_frequent_words_plot
+```
+
+## Removing Stopwords
+```{r}
+ word_count.df2 <- cleaned_master_dataset %>%
+  unnest_tokens(input = stripped_punctuations, output = word) %>%
+  anti_join(stop_words, by="word") %>%
+  count(word, name = "freq", sort = TRUE)
+```
+
+## Top 20 Words based on Frequency Count Visualization (removed stopwords) 
+## This code generates Figure 1 in the results section
+```{r}
+library(ggplot2)
+
+most_frequent_words_plot <-
+  word_count.df2 %>%
+  top_n(20, freq) %>%
+  mutate(word = reorder(word, freq)) %>%
+  # visualizing the 10 most frequent words
+  ggplot(aes(word, freq)) +
+  geom_col(col = "darkblue", fill = "darkorange") +
+  labs( title = "Most Frequently Used Words",
+        x     = "Words",
+        y     = "Frequency") +
+  theme(plot.title   = element_text(hjust = 0.5, face = "bold", size = 24),
+        axis.text.x  = element_text(hjust = 0.5, face = "bold", size = 18),
+        axis.text.y  = element_text(hjust = 0.5, face = "bold", size = 18),
+        axis.title.x = element_text(hjust = 0.5, face = "bold", size = 20)) +
+  coord_flip() 
+most_frequent_words_plot
+```
+
+
+## Saving the visualization into an image file
+```{r}
+jpeg(file = "most_frequent_words_in_the_corpus.jpg", width=1000, height=600)
+ most_frequent_words_plot
+ dev.off()
+```
+
+
+
+## Word Cloud of Frequency Count without stopwords
+```{r}
+wordcloud2(data=word_count.df2,
+           size = 1,
+           color="random-dark",
+           shape="diamond")
+```
+
+## Saving the dataframe into a CSV file
+```{r}
+write.csv(word_count.df2, "tokenized_wordfrequency.csv", row.names=FALSE)
+```

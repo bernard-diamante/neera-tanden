@@ -1,0 +1,29 @@
+---
+title: "data_cleaning"
+author: "Paolo Fuentes"
+date: "1/5/2021"
+output: html_document
+---
+
+## Loading libraries
+```{r}
+library(tidytext)
+library(tidyverse)
+library(dplyr)
+library(wordcloud2)
+```
+
+## Loading the CSV file of the uncleaned mined tweets
+```{r}
+all_uncleaned_mined_tweets <- read_csv("all_uncleaned_mined_tweets.csv", col_types="cccccc")
+```
+
+## Removing Punctuations and Emojis
+```{r}
+remove_expressions <- "&amp;|&lt;|&gt;|\\s+|https\\S+|\\p{So}|\\p{Cn}|\\p{Sc}|\\p{S}|<U\\+"
+
+cleaned_master_dataset <- all_uncleaned_mined_tweets %>%
+  mutate(stripped_punctuations = str_replace_all(text, remove_expressions, " "))
+
+write.csv(cleaned_master_dataset, "cleaned_master_dataset.csv", row.names = FALSE)
+```

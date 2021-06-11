@@ -1,0 +1,157 @@
+---
+title: "Topic Modelling"
+author: "JJ Laguer"
+date: "12/15/2020"
+output: html_document
+---
+
+## Loading libraries
+```{r}
+library(textreadr)
+library(tidyverse)
+library(tidytext)
+library(ggplot2)
+library(wordcloud2)
+library(topicmodels)
+library(rebus)
+library(ldatuning)
+```
+
+## Reading csv 
+```{r}
+all_neera_tweets <- read.csv("cleaned_master_dataset.csv")
+```
+
+## Initilize stopwords 
+```{r}
+merged_stopwords <- stop_words
+```
+
+## Tokenizing stripped text and outputing to word column
+```{r}
+token_all_neera_tweets <- all_neera_tweets %>%
+  unnest_tokens(input = stripped_punctuations, output = word)
+```
+
+## Filtering and removing stopwords and different link parts 
+```{r}
+words.df_stopwords = token_all_neera_tweets %>%
+  anti_join(merged_stopwords, by = "word") %>%
+  filter(word != "https") %>%
+  filter(word != "t.co")
+```
+
+## Creating data term matrix 
+```{r}
+count_words.df_stopwords <- words.df_stopwords %>%
+  count(name, word, name = "freq", sort = TRUE) # put user_id at the start for dtm
+```
+
+## Casting to data term matrix 
+```{r}
+neera_dtm <- count_words.df_stopwords %>%
+  cast_dtm(name, word, freq)
+neera_dtm
+```
+
+## Control list gibbs initialized ##
+```{r}
+control_list_gibbs <- list(
+  burnin = 500,
+  iter = 1000,
+  seed = 0:4,
+  nstart = 5,
+  best = TRUE
+)
+```
+
+## LDATUNING FOR K
+```{r}
+# parallel::detectcores() to get number of logical cores
+# make sure to change mc.cores to whatever the output of above code is
+
+Metrics  = c("Griffiths2004",
+               "CaoJuan2009",
+               "Arun2010",
+               "Deveaud2014")
+result2 <- FindTopicsNumber(
+  neera_dtm,
+  topics   = seq(from = 2, to=20, by = 1),
+  metrics  = Metrics,
+  method   = "Gibbs",
+  control  = control_list_gibbs,
+  mc.cores = 8, 
+  verbose  = TRUE)
+```
+
+```{r}
+CaoJuan2009   <- result2$topics[result2$CaoJuan2009   == min(result2$CaoJuan2009)]
+Arun2010      <- result2$topics[result2$Arun2010      == min(result2$Arun2010)]
+Griffiths2004 <- result2$topics[result2$Griffiths2004 == max(result2$Griffiths2004)]
+Deveaud2014   <- result2$topics[result2$Deveaud2014   == max(result2$Deveaud2014)]
+tibble( metrics = c("Arun2010", "CaoJuan2009",  "Deveaud2014", "Griffiths2004"),
+        best_k  = c(Arun2010, CaoJuan2009 ,Deveaud2014, Griffiths2004),
+        method  = c(rep("minimization", 2),
+                    rep("maximization", 2)))
+```
+
+## LDA 20 TOPIC MODEL
+```{r initializing 20 topic model}
+lda20_topic_model <- 
+  LDA(x       = neera_dtm, 
+      k       = 20, 
+      method  = "Gibbs",
+      control = control_list_gibbs)
+lda20_topic_model
+```
+
+## Theme
+```{r}
+theme_lda_beta <- function()
+{theme(plot.title = element_text(hjust=0.5, size = 28, face = "bold"),
+        strip.text.x = element_text(margin = margin(2,0,2,0), size = 20,face="bold"),
+        axis.title.x = element_text(hjust = 0.5, face = "bold", size = 20),
+        axis.title.y = element_text(hjust = 0.5, face = "bold", size = 20),
+        axis.text.x  = element_text(hjust = 0.5, face = "bold", size = 18),
+        axis.text.y  = element_text(hjust = 0.5, face = "bold", size = 18))}
+```
+
+## Showing beta plot
+```{r}
+lda20_beta <- 
+  tidy(lda20_topic_model, matrix="beta") 
+
+plt_lda20_beta <- lda20_beta %>%
+  group_by(topic) %>%
+  top_n(10,beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta) %>%
+  mutate(term2 = fct_reorder(term,beta)) %>%
+  ggplot(
+  aes(x = term2, y = beta, fill = as.factor(topic))) %+%
+  geom_col(show.legend = FALSE) %+%
+  facet_wrap(~topic, scales = "free") %+%
+  coord_flip() %+%
+  theme_lda_beta() %+%
+  labs(title = "Twenty-Topic LDA Model on Word Probabilities Per Topic")
+
+show(plt_lda20_beta)
+dev.off()
+```
+
+```{r}
+table(lda20_beta$topic)
+```
+
+## This generates Figure 2 in the results section
+```{r}
+lda20_beta %>%
+  group_by(topic) %>%
+  top_n(10, beta) %>%
+  arrange(topic,-beta)
+```
+
+## Saving table into a CSV file
+```{r}
+write_csv(tidy(lda20_topic_model), "csv_files/lda20_topic_model.csv")
+```
