@@ -77,7 +77,7 @@
 <h2>Overview</h2>
 <p><b>Data Corpus</b><br> 
 Consists of tweets obtained using keywords related to Neera Tanden and her appointment to office by President-elect Joe Biden.</p>
-<p><b>Timespan (November 30 to December 8, 2020</b><br> 
+<p><b>Timespan (November 30 to December 8, 2020)</b><br> 
 Nine days after Tanden’s announcement as the appointed director of the Office of Management and Budget (OMB).</p>
 <p><b>Corpus Size</b><br> 
 From a total of 48,788 Tweets in the original corpus reduced to 45,763 after cleaning duplicates.</p>
