@@ -50,7 +50,7 @@
 <ul>
   <li>After compiling all of the data gathered from text mining, we set <b>status_id as the primary key</b> and removed all duplicates based on this.</li>
   <li>Due to President Biden’s announcement regarding Neera Tanden’s appointment being on November 30, we filtered out mined Tweets that were created beforehand.</li>
-  <li>For use of the necessary data analysis methods, <b>a list of stopwords will be utilized<b> in order to filter out “meaningless” words that have low TF-IDF scores.</li>
+  <li>For use of the necessary data analysis methods, <b>a list of stopwords will be utilized</b> in order to filter out “meaningless” words that have low TF-IDF scores.</li>
 </ul>
 <h3>Data Analysis</h3>
     <ul>
